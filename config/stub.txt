@@ -1,0 +1,14 @@
+read numLaps:int
+read numPlayers:int
+read pitStopDuration:int
+
+loop 9 read tyreCompound:word(6) tyreStrat:word(4) wear:int
+
+loop 3 loop 5 read tyreCompound:word(6) wearStart:int wearStop:int lapTime:int
+
+gameloop
+loop numPlayers read rank:int interval:int previousLapTime:int tyreCompound:word(6) tyreAge:int 
+
+write START <tyreCompound> <totalFuel> <EngineMap> <TyreStrat>
+PUSH <EngineMap> <TyreStrat>
+PIT <tyreCompound> <FuelToAdd> <EngineMap> <TyreStrat>

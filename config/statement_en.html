@@ -1,0 +1,280 @@
+<div id="statement_back" class="statement_back" style="display:none"></div>
+<div class="statement-body">
+  <!-- GOAL -->
+  <div class="statement-section statement-goal">
+    <h1>
+      <span class="icon icon-goal">&nbsp;</span>
+      <span>The Goal</span>
+    </h1>
+    <div class="statement-goal-content">
+      Be the fastest to reach the finish line.
+      <br>
+      <br>
+      For this question, you will be asked to output a single line output per turn.
+    </div>
+  </div>
+  <!-- RULES -->
+  <div class="statement-section statement-rules">
+    <h1>
+      <span class="icon icon-rules">&nbsp;</span>
+      <span>Rules</span>
+    </h1>
+    <div>
+      <div class="statement-rules-content">
+        You are in 2122. For safety reasons, racers are now replaced by robot and every cars are identicals. 
+
+        Your team hire you for 1 objective. <strong>You need to define the best race strategy</strong>.
+        <br><br>
+        <strong>Constants :</strong><br><br>
+        
+        <ul>
+          <li>
+            <strong>Time :</strong>
+            The time is given in chunk of seconds. 1 chunk of a second is <var>0.01</var>s.
+          </li>
+          <li>
+            <strong>Max Fuel :</strong>
+            The car can hold up to <var>140</var>L of fuel.
+          </li>
+          <li>
+            <strong>Initial Battery Level :</strong>
+            The the start the battery is at <var>100</var>%.
+          </li>
+          <li>
+            <strong>Initial Lifes :</strong>
+            The default tyre and engine life is <var>1000</var>.
+          </li>
+        </ul>
+
+        As a strategist, you have access to multiple parameters to be the fastest:
+
+        <strong>Parameters :</strong><br><br>
+        <ul>
+          <li>
+            <strong>Tyre Compound</strong> : You decide which tires you want to install in the 3 available ones:
+            <ul>
+              <li><var>SOFT</var> : Faster on track but wear quite quickly</li>
+              <li><var>MEDIUM</var> : Normal on track but balanced wear</li>
+              <li><var>HARD</var> : Slowest on track but wear slowly</li>
+            </ul>
+            The base life of a tyre is 1000. Based on the compound and the wear, the lap time is impacted. The matrix is provided during the first turn input. If your tires reach 0, it blows out.
+          </li>
+          <li>
+            <strong>Engine Map</strong> : The electronic provide more or less fuel to the engine.
+            <ul>
+              <li><var>HIGH</var> : Consume more fuel. Reduce the lap time. Maximum wear of the engine</li>
+              <li><var>MID</var> : Consume less fuel. Lap time is balanced. Balanced wear of the engine</li>
+              <li><var>LOW</var> : Consume minimum fuel. Lap time is increased. Limited wear of the engine</li>
+            </ul>
+            The base life of the engine in 1000. Based on the map used, the wear. The wear every lap is based on the map. Wear values are provided in the first turn. If your engine reach 0, it blows out.
+          </li>
+          <li>
+            <strong>Tyre Strategy</strong> : The robot uses more or less life from tires to reduce lap time.
+            <ul>
+              <li><var>HIGH</var> : Reduce lap time but increase the wear per lap from those tires</li>
+              <li><var>MID</var> : Increase a bit the lap time but the tires will last longer</li>
+              <li><var>LOW</var> : The robot tries to extend as much as possible the tire life but reduce lap time.</li>
+            </ul>
+            The strategy changes the wear per lap given to tires and the lap time. The formula is provided in the Expert rule area.
+          </li>
+          <li>
+            <strong>ERS Strategy</strong> : The car has some electric power to support the engine. 
+            <ul>
+              <li><var>HIGH</var> : Consume more energy every lap but lap times are improved</li>
+              <li><var>MID</var> : The engine has less support but the battery stay stable</li>
+              <li><var>LOW</var> : Recharge a bit the battery during the lap but slows the car.</li>
+            </ul>
+            The base battery life is 1000. Based on the strategy, in uses a different amount of energy. The matrix is provided during the first turn.
+          </li>
+        </ul>
+
+        <strong>First Turn :</strong><br>
+        
+        <ul>
+          <li>
+            <strong>Inputs :</strong>
+              Every race is different. There can be more turns, braking zone, track surface. As a result, all parameters are provided in the first turn. Most of them are required only in advanced simulations.
+              <ul>
+                <li>
+                  <var>numLaps</var> (int) : number of laps to do (30 -> 600).
+                </li>
+                <li>
+                  <var>numPlayers</var> (int) : number of starting players (2 -> 4).
+                </li>
+                <li>
+                  <var>pitStopDuration</var> (int) : time lost during the pit stop. Refuel action take <var>100</var> times per 10L refueled. 
+                </li>
+                <li>
+                  Next 9 lines : <br>
+                  <var>tyreCompound</var> (string), <var>tyreStrategy</var> (string), <var>wearPerLap</var> (int) : tyreLife removed every lap based on the tyre compound and strategy during the lap.
+                </li>
+                <li>
+                  for each tyreCompound : <br>
+                  <var>wearLevel</var> (int), <var>LapTime</var> (int)
+                  This provides a profile of base lap time based on the wear. The base lap time for a given wear is provided using a lerp. The profile have 4 points. For example if the profile is:
+                  <ul>
+                    <li>1000, 6000</li>
+                    <li>600, 6500</li>
+                    <li>250, 7500</li>
+                    <li>0, 10000</li>
+                  </ul>
+                  The lap time for a new tyre will be 6000. For a tyre having 800/1000, the lap time will be at 6250 (rounded up).
+                </li>
+              </ul>
+          </li>
+          <li>
+            <strong>Output :</strong>
+              In the first turn, you need to provide the starting configuration. The format is:<BR><BR>
+              <var>START &lt;FUEL QUANTITY&gt; &lt;TYRE COMPOUND&gt; &lt;ENGINE MAP&gt; &lt;TYRE STRATEGY&gt; &lt;ERS STRATEGY&gt;</var><BR><BR>
+              for example <var>START 100 SOFT HIGH HIGH MID</var><BR><BR>
+          </li>
+        </ul>
+
+        <strong>Every other turns :</strong><br>
+
+        <ul>
+          <li>
+            <strong>Inputs :</strong>
+
+          </li>
+          <li>
+            <strong>Output :</strong>
+              You can decide of 2 decisions:
+              <ul>
+                <li>
+                  Box the driver to change tires and optionnaly refuel. The format is:<BR><BR>
+                  <var>BOX &lt;FUEL QUANTITY TO ADD&gt; &lt;TYRE COMPOUND&gt; &lt;ENGINE MAP&gt; &lt;TYRE STRATEGY&gt; &lt;ERS STRATEGY&gt;</var><BR><BR>
+                  for example <var>BOX 40 MEDIUM MID LOW HIGH</var><BR><BR>
+                  <strong>The boxing action takes some lap times. The refuel also add some times to the lap time. Be careful :) </strong>
+                </li>
+                <li>Stay on track and ajdust the strategy<BR><BR>
+                  <var>PUSH &lt;ENGINE MAP&gt; &lt;TYRE STRATEGY&gt; &lt;ERS STRATEGY&gt;</var><BR><BR>
+                  for example <var>PUSH MEDIUM MID LOW HIGH</var><BR><BR>
+                </li>
+              </ul>
+          </li>
+        </ul>
+    </div>
+  </div>
+
+  <!-- WIN CONDITIONS -->
+  <div class="statement-victory-conditions">
+    <div class="icon victory"></div>
+    <div class="blk">
+      <div class="title">Victory Conditions</div>
+      <div class="text">
+        <ul style="padding-bottom:0">
+          <li>
+            You reaches the finish line first
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOSE CONDITIONS -->
+  <div class="statement-lose-conditions">
+    <div class="icon lose"></div>
+    <div class="blk">
+      <div class="title">Loss Conditions</div>
+      <div class="text">
+        <ul style="padding-bottom:0">
+          <li>You run out of fuel</li>
+          <li>Your engine blows out</li>
+          <li>Your tires blows out</li>
+          <li>You are 1 lap behind the leader</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <BR>
+  <!-- EXPERT RULES -->
+  <div class="statement-section statement-expertrules">
+    <h1>
+      <span class="icon icon-expertrules">&nbsp;</span>
+      <span>Expert Rules</span>
+    </h1>
+    <div class="statement-expert-rules-content">
+      If you're going to run local simulations, you'll need to know this!
+    </div>
+  </div>
+  <!-- EXAMPLES -->
+  <div class="statement-section statement-examples">
+    <h1>
+      <span class="icon icon-example">&nbsp;</span>
+      <span>Example</span>
+    </h1>
+
+    <div class="statement-examples-text">
+      A basic situation, an instruction, a result.
+    </div>
+
+  </div>
+  <!-- WARNING -->
+  <div class="statement-section statement-warning">
+    <h1>
+      <span class="icon icon-warning">&nbsp;</span>
+      <span>Note</span>
+    </h1>
+    <div class="statement-warning-content">
+      <b>Don’t forget to run the tests by launching them from the “Test cases” window</b>. You can submit at any time
+      to recieve a score against the training validators. <b>You can submit as many times as you like</b>. Your most
+      recent submission will be used for the final ranking.<br>
+      <br>
+      <strong>Warning:</strong> the validation tests used to compute the final score are not the same as the ones used
+      during the event.
+      Harcoded solutions will not score highly.<br>
+      <br>
+      Don't hesitate to change the viewer's options to help debug your code (<img style="opacity:.8;background:#20252a;"
+        height="18" src="https://www.codingame.com/servlet/fileservlet?id=3463235186409" width="18">).
+    </div>
+  </div>
+  <!-- PROTOCOL -->
+  <div class="statement-section statement-protocol">
+    <h1>
+      <span class="icon icon-protocol">&nbsp;</span>
+      <span>Game Input</span>
+    </h1>
+    <!-- Protocol block -->
+    <div class="blk">
+      <div class="text">The program must first read the initialization data from standard input. Then, provide to the
+        standard output one line with ...</div>
+    </div>
+
+    <!-- Protocol block -->
+    <div class="blk">
+      <div class="title">Input</div>
+      <div class="text">
+        <p><span class="statement-lineno">Line 1: </span>one string <var>...</var>, the ...</p>
+      </div>
+    </div>
+
+    <!-- Protocol block -->
+    <div class="blk">
+      <div class="title">Output</div>
+      <div class="text">
+        <span class="statement-lineno">A single line</span> containing ...
+        <br>
+      </div>
+    </div>
+
+    <!-- Protocol block -->
+    <div class="blk">
+      <div class="title">Constraints</div>
+      <div class="text"><var>...</var> contains between 1 and 500 characters.<br>
+        <br>Allotted response time to output
+        is ≤ <const>2</const> seconds.</div>
+    </div>
+  </div>
+  <!-- STORY -->
+  <div class="statement-story-background">
+    <div class="statement-story-cover" style="background-size: cover; background-image: url(https://www.codingame.com/servlet/fileservlet?id=2210505809934)">
+      <div class="statement-story">
+        <h1>Title</h1>
+        <div class="story-text">Story
+          <br>
+          Totally optional</div>
+      </div>
+    </div>
+  </div>
+</div>
